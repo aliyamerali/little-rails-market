@@ -1,12 +1,17 @@
 # Little Esty Shop
 
 ## About this Project
-"Little Esty Shop" is a group project that requires students to build a fictitious e-commerce platform where merchants and admins can manage inventory and fulfill customer invoices 
+"Little Esty Shop" is a group project that requires students to build a fictitious e-commerce platform where merchants and admins can manage inventory and fulfill customer invoices. This repo builds upon the core functionality defined in these [user stories](./doc/user_stories.md) to add on a bulk-discount feature, as defined in these [user stories](https://backend.turing.edu/module2/projects/bulk_discounts).
 
-Timeframe: 9 days  
+#### Bulk Discount Functionality
+Timeframe: 6 days   
+Heroku: <link TBA>
+
+#### Core Functionality
+Timeframe: 9 days   
 Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)
 
-## Contributors
+## Contributors (Core Functionality only)
 - Lawrence Whalen  
    [Github](https://github.com/LawrenceWhalen) | [LinkedIn](https://www.linkedin.com/in/lawrence-whalen-15996220a/)
 - Aliya Merali  
@@ -59,13 +64,6 @@ Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)
 * To run our test suite, RSpec, enter `$ bundle exec rspec` in the terminal.
 * To see a coverage report enter `$ open coverage/index.html`
 
-## Phases
-
-1. [Database Setup](./doc/db_setup.md)
-1. [User Stories](./doc/user_stories.md)
-1. [Extensions](./doc/extensions.md)
-1. [Evaluation](./doc/evaluation.md)
-
 ## Additonal References
-- [Base Repository](https://github.com/LawrenceWhalen/little-esty-shop) used for Turing's Backend Module 3.
+- [Base Repository](https://github.com/turingschool-examples/little-esty-shop) used for Turing's Backend Module 2.
 - [Github Documentation](https://docs.github.com/en/rest) used for Github documentation.
