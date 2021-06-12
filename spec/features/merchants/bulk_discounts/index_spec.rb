@@ -13,20 +13,49 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
     visit "/merchants/#{@merchant1.id}/bulk_discounts"
   end
 
+  it 'shows a link to create a new discount' do
+    page.find_link("New Discount")[new_merchant_bulk_discount_path(@merchant1.id)]
+  end
+
   it 'shows all of my bulk discount %s and quantity thresholds' do
-    expect(page).to have_content(@discount1.percentage)
-    expect(page).to have_content(@discount1.quantity_threshold)
-    expect(page).to have_content(@discount2.percentage)
-    expect(page).to have_content(@discount2.quantity_threshold)
-    expect(page).to have_content(@discount3.percentage)
-    expect(page).to have_content(@discount3.quantity_threshold)
-    expect(page).to_not have_content(@discount4.percentage)
-    expect(page).to_not have_content(@discount4.quantity_threshold)
+    within("#discount-#{@discount1.id}") do
+      expect(page).to have_content(@discount1.percentage)
+      expect(page).to have_content(@discount1.quantity_threshold)
+    end
+    within("#discount-#{@discount2.id}") do
+      expect(page).to have_content(@discount2.percentage)
+      expect(page).to have_content(@discount2.quantity_threshold)
+    end
+    within("#discount-#{@discount3.id}") do
+      expect(page).to have_content(@discount3.percentage)
+      expect(page).to have_content(@discount3.quantity_threshold)
+    end
+    expect(page).not_to have_selector("#discount-#{@discount4.id}")
   end
 
   it 'links to the show page of each bulk discount' do
-    expect(page).to have_link(@discount1.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount1.id))
-    expect(page).to have_link(@discount2.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount2.id))
-    expect(page).to have_link(@discount3.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount3.id))
+    page.find_link(@discount1.id)[merchant_bulk_discount_path(@merchant1.id, @discount1.id)]
+    page.find_link(@discount2.id)[merchant_bulk_discount_path(@merchant1.id, @discount2.id)]
+    page.find_link(@discount3.id)[merchant_bulk_discount_path(@merchant1.id, @discount3.id)]
   end
+
+  it 'shows a link to delete each bulk discount' do
+    page.find_link("Delete Discount ##{@discount1.id}")["/merchants/#{@merchant1.id}/bulk_discounts/#{@discount1.id}"]
+  end
+
+  it 'deletes the bulk discount when delete link is clicked' do
+    click_link "Delete Discount ##{@discount1.id}"
+
+    expect(page).not_to have_selector("#discount-#{@discount1.id}")
+
+    within("#discount-#{@discount2.id}") do
+      expect(page).to have_content(@discount2.percentage)
+      expect(page).to have_content(@discount2.quantity_threshold)
+    end
+    within("#discount-#{@discount3.id}") do
+      expect(page).to have_content(@discount3.percentage)
+      expect(page).to have_content(@discount3.quantity_threshold)
+    end
+  end
+
 end

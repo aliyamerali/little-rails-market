@@ -1,0 +1,8 @@
+<%= form_with model: [@merchant, @discount], local: :true do |f| %>
+  <%= f.label :percentage, "Percentage" %>
+  <%= f.text_field :percentage, required: true%>
+  <%= f.label :quantity_threshold, "Quantity Threshold"%>
+  <%= f.number_field :quantity_threshold, required: true%>
+  <br><br>
+  <%= f.submit %>
+<% end %>
