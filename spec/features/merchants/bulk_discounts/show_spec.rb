@@ -14,7 +14,7 @@ RSpec.describe 'Merchant\'s Bulk Discount show', type: :feature do
   end
 
   it 'has a link to edit the bulk discount' do
-    page.find_button("Edit Discount")["/merchants/#{@merchant.id}/bulk_discounts/#{@discount.id}"]
+    page.find_button("Edit Discount")[edit_merchant_bulk_discount_path(@merchant.id, @discount.id)]
   end
 
   it 'edit link leads to an edit page' do
