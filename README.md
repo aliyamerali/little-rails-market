@@ -5,7 +5,7 @@
 
 #### Bulk Discount Functionality
 Timeframe: 6 days   
-Heroku: <link TBA>
+Heroku: [Little Rails Market](https://little-rails-market.herokuapp.com/)
 
 #### Core Functionality
 Timeframe: 9 days   
