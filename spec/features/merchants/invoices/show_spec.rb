@@ -75,7 +75,7 @@ RSpec.describe 'Merchant Invoices Show Page' do
     end
 
     it 'displays the discounted revenue generated from all of my items on the invoice' do
-      expect(page).to have_content 'Discounted revenue: $1.750.00'
+      expect(page).to have_content 'Discounted revenue: $1,750.00'
     end
 
     it 'can update an invoice item status' do
