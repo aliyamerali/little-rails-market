@@ -33,6 +33,26 @@ class Invoice < ApplicationRecord
     .sum('invoice_items.unit_price * invoice_items.quantity')
   end
 
+  def enum_integer
+    enum_convert = Invoice.statuses
+    enum_convert[self.status]
+  end
+
+# TO TEST
+  def discounted_revenue_for_merchant(merchant_id)
+    discounts = invoice_item_discounts(merchant_id)
+    initial_revenue = invoice_item_undiscounted_revenue(merchant_id)
+
+    initial_revenue.sum do |invoice_item_id, revenue|
+      if !discounts[invoice_item_id].nil?
+        revenue * (1.0 - discounts[invoice_item_id]/100.0)
+      else
+        revenue
+      end
+    end
+  end
+
+
   def invoice_item_discounts(merchant_id)
     invoice_items
     .joins(item: {merchant: :bulk_discounts})
@@ -42,21 +62,10 @@ class Invoice < ApplicationRecord
     .maximum('bulk_discounts.percentage')
   end
 
-#TO TEST
-  def invoice_item_costs(merchant_id)
-    invoice_items
+  def invoice_item_undiscounted_revenue(merchant_id)
+    items
     .where('items.merchant_id = ?', merchant_id)
     .group('invoice_items.id')
     .sum('invoice_items.unit_price * invoice_items.quantity')
-  end
-
-# TO TEST
-  def discounted_revenue_for_merchant
-
-  end
-
-  def enum_integer
-    enum_convert = Invoice.statuses
-    enum_convert[self.status]
   end
 end
