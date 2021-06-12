@@ -1,6 +1,8 @@
 <h1><%= @merchant.name %></h1>
 <h2>Your Bulk Discounts</h2>
 
+<%= link_to "New Discount", new_merchant_bulk_discount_path(@merchant.id) %>
+
 <table>
   <th>Discount ID</th>
   <th>Percentage</th>
