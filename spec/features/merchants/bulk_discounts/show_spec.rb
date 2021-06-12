@@ -12,4 +12,8 @@ RSpec.describe 'Merchant\'s Bulk Discount show', type: :feature do
     expect(page).to have_content(@discount.percentage)
     expect(page).to have_content(@discount.quantity_threshold)
   end
+
+  it 'has a link to edit the bulk discount' do
+    page.find_button("Edit Discount")["/merchants/#{@merchant.id}/bulk_discounts/#{@discount.id}"]
+  end
 end

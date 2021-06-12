@@ -4,3 +4,7 @@
 
 <p>Percentage: <%= @discount.percentage %>% </p>
 <p>Quantity Threshold: <%= @discount.quantity_threshold %> items </p>
+
+<br><br>
+
+<%= button_to "Edit Discount", url: "/merchants/#{@merchant.id}/bulk_discounts/#{@discount.id}", method: :patch %>
