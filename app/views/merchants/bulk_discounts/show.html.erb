@@ -7,4 +7,4 @@
 
 <br><br>
 
-<%= button_to "Edit Discount", url: "/merchants/#{@merchant.id}/bulk_discounts/#{@discount.id}", method: :patch %>
+<%= button_to "Edit Discount", edit_merchant_bulk_discount_path(@merchant.id, @discount.id), method: :get %>
