@@ -1,0 +1,6 @@
+<%= render partial: './partials/merchant_nav' %>
+
+<h2><%= @merchant.name %> Bulk Discount #<%= @discount.id %></h2>
+
+<p>Percentage: <%= @discount.percentage %>% </p>
+<p>Quantity Threshold: <%= @discount.quantity_threshold %> items </p>
