@@ -8,11 +8,13 @@
   <th>Discount ID</th>
   <th>Percentage</th>
   <th>Quantity Threshold</th>
+  <th>Delete</th>
   <% @discounts.each do |discount| %>
     <tr id="discount-<%=discount.id%>">
       <td><%= link_to discount.id, merchant_bulk_discount_path(@merchant.id, discount.id) %></td>
       <td><%= discount.percentage %>%</td>
       <td><%= discount.quantity_threshold %></td>
+      <td><%= link_to "Delete Discount ##{discount.id}", "/merchants/#{@merchant.id}/bulk_discounts/#{discount.id}", method: :delete %></td>
     </tr>
   <% end %>
 </table>
