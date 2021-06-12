@@ -23,6 +23,14 @@ RSpec.describe 'Bulk Discount create', type: :feature do
     expect(@merchant1.bulk_discounts.last.quantity_threshold).to eq(25)
   end
 
+  it 'shows an error message if a field is missing' do
+    fill_in "Percentage", with: 12.5
+    click_button "Create Bulk discount"
+
+    expect(page).to have_current_path(new_merchant_bulk_discount_path(@merchant1.id))
+    expect(page).to have_content "Error: Quantity threshold can't be blank"
+  end
+
   it 'redirects to the merchants discount index, showing new discount' do
     fill_in "Percentage", with: 15.5
     fill_in "Quantity Threshold", with: 15
@@ -30,7 +38,7 @@ RSpec.describe 'Bulk Discount create', type: :feature do
 
     new_discount = @merchant1.bulk_discounts.last
 
-    expect(page).to have_current_path(merchant_bulk_discounts_path)
+    expect(page).to have_current_path(merchant_bulk_discounts_path(@merchant1.id))
     within("#discount-#{new_discount.id}") do
       expect(page).to have_content(new_discount.percentage)
       expect(page).to have_content(new_discount.quantity_threshold)
