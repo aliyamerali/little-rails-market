@@ -24,9 +24,9 @@ RSpec.describe 'Merchant Invoices Show Page' do
 
       # my items
       @item_1 = @merchant.items.create!(name: 'Gold Ring', description: 'Jewelery', unit_price: 10000)
-      @item_4 = @merchant.items.create!(name: 'Hair Clip', description: 'Accessories', unit_price: 200)
       @item_2 = @merchant.items.create!(name: 'Silver Ring', description: 'Jewelery', unit_price: 5000)
       @item_3 = @merchant.items.create!(name: 'Hoop Earrings', description: 'Jewelery', unit_price: 1000)
+      @item_4 = @merchant.items.create!(name: 'Hair Clip', description: 'Accessories', unit_price: 200)
 
       # other merchant items
       @item_5 = @merchant_2.items.create!(name: 'Silver Bracelet', description: 'Accessories', unit_price: 3000)
@@ -35,10 +35,16 @@ RSpec.describe 'Merchant Invoices Show Page' do
       @invoice_1 = @customer_1.invoices.create!(status: 1, created_at: "2012-03-06 14:54:15 UTC")
       @invoice_2 = @customer_2.invoices.create!(status: 1, created_at: "2012-03-09 14:54:15 UTC")
 
+      #my discounts
+      @merchant.bulk_discounts.create!(percentage: 10, quantity_threshold: 15)
+      @merchant.bulk_discounts.create!(percentage: 20, quantity_threshold: 15)
+      @merchant.bulk_discounts.create!(percentage: 25, quantity_threshold: 19)
+      @merchant.bulk_discounts.create!(percentage: 30, quantity_threshold: 25)
+
       # items for invoice 1
-      @invoice_item_1 = InvoiceItem.create!(quantity: 2, unit_price: 10000, item_id: @item_1.id, invoice_id: @invoice_1.id, status: 1) # $200
-      @invoice_item_2 = InvoiceItem.create!(quantity: 2, unit_price: 5000, item_id: @item_2.id, invoice_id: @invoice_1.id, status: 1) # $100
-      @invoice_item_3 = InvoiceItem.create!(quantity: 2, unit_price: 1000, item_id: @item_3.id, invoice_id: @invoice_1.id, status: 1) # $20
+      @invoice_item_1 = InvoiceItem.create!(quantity: 10, unit_price: 10000, item_id: @item_1.id, invoice_id: @invoice_1.id, status: 1) # $1000 total / no discount
+      @invoice_item_2 = InvoiceItem.create!(quantity: 15, unit_price: 5000, item_id: @item_2.id, invoice_id: @invoice_1.id, status: 1) # $750 total / $600 discounted (20%)
+      @invoice_item_3 = InvoiceItem.create!(quantity: 20, unit_price: 1000, item_id: @item_3.id, invoice_id: @invoice_1.id, status: 1) # $200 / $150 discounted (25%)
       @invoice_item_5 = InvoiceItem.create!(quantity: 2, unit_price: 3000, item_id: @item_5.id, invoice_id: @invoice_1.id, status: 1) # Other merchant rev
       @invoice_item_6 = InvoiceItem.create!(quantity: 2, unit_price: 2000, item_id: @item_6.id, invoice_id: @invoice_1.id, status: 2) # Other merchant rev
 
@@ -65,7 +71,11 @@ RSpec.describe 'Merchant Invoices Show Page' do
     end
 
     it 'displays the total revenue generated from all of my items on the invoice' do
-      expect(page).to have_content 'Total revenue: $320.00'
+      expect(page).to have_content 'Total revenue: $1,950.00'
+    end
+
+    it 'displays the discounted revenue generated from all of my items on the invoice' do
+      expect(page).to have_content 'Discounted revenue: $1.750.00'
     end
 
     it 'can update an invoice item status' do

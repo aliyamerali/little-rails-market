@@ -42,7 +42,7 @@ RSpec.describe Invoice do
   end
 
   describe 'class methods' do
-    describe '#unshipped_items' do
+    describe '.unshipped_items' do
       it 'returns a collection of invoices that have unshipped items' do
         expect(Invoice.unshipped_items.first.customer_id).to eq(@customer_1.id)
         expect(Invoice.unshipped_items.length).to eq(5)
@@ -52,7 +52,7 @@ RSpec.describe Invoice do
   end
 
   describe 'instance methods' do
-    describe '.item_sale_price' do
+    describe '#item_sale_price' do
       it 'returns all items from an invoice and the amount they sold for and number sold' do
         actual = @invoice_1.item_sale_price.first
 
@@ -61,7 +61,7 @@ RSpec.describe Invoice do
       end
     end
 
-    describe '.total_revenue' do
+    describe '#total_revenue' do
       it 'returns all items from an invoice and the amount they sold for and number sold' do
         actual = @invoice_1.total_revenue
 
@@ -69,7 +69,7 @@ RSpec.describe Invoice do
       end
     end
 
-    describe '.total_revenue_for_merchant' do
+    describe '#total_revenue_for_merchant' do
       it 'returns the total revenue expected for the invoice only for items belonging to given merchant' do
         merchant = Merchant.create!(name: "Little Shop of Horrors")
         merchant_2 = Merchant.create!(name: 'James Bond')
@@ -101,7 +101,43 @@ RSpec.describe Invoice do
       end
     end
 
-    describe '.enum_integer' do
+    describe '#discounted_revenue_for_merchant' do
+      it 'returns the discounted revenue for the invoice only for items belonging to given merchant based on merchant\'s discounts' do
+        merchant = Merchant.create!(name: "Little Shop of Horrors")
+        merchant_2 = Merchant.create!(name: 'James Bond')
+
+        customer = Customer.create!(first_name: 'Audrey', last_name: 'I')
+        invoice_1 = customer.invoices.create!(status: 1, updated_at: '2021-03-01')
+
+        # my items on invoice
+        item_1 = merchant.items.create!(name: 'Audrey II', description: 'Large, man-eating plant', unit_price: '100000000', enabled: true)
+        item_2 = merchant.items.create!(name: 'Bouquet of roses', description: '12 red roses', unit_price: '1900', enabled: true)
+        item_4 = merchant.items.create!(name: 'Echevaria', description: 'Peacock varietal', unit_price: '3100', enabled: true)
+
+        # other merchant items on invoice
+        item_8 = merchant_2.items.create!(name: 'Silver Bracelet', description: 'Accessories', unit_price: 3000)
+        item_9 = merchant_2.items.create!(name: 'Bronze Ring', description: 'Jewelery', unit_price: 2000)
+
+        #my discounts
+        merchant.bulk_discounts.create!(percentage: 10, quantity_threshold: 8)
+        merchant.bulk_discounts.create!(percentage: 20, quantity_threshold: 15)
+        merchant.bulk_discounts.create!(percentage: 25, quantity_threshold: 19)
+        merchant.bulk_discounts.create!(percentage: 30, quantity_threshold: 25)
+
+        # $320 for my revenue
+        invoice_item_1 = item_1.invoice_items.create!(invoice_id: invoice_1.id, quantity: 20, unit_price: 10000, status: 0) # $2000 total / $1500 discounted (25%)
+        invoice_item_2 = item_2.invoice_items.create!(invoice_id: invoice_1.id, quantity: 10, unit_price: 5000, status: 0) # $500 total / $450 discounted (10%)
+        invoice_item_3 = item_4.invoice_items.create!(invoice_id: invoice_1.id, quantity: 2, unit_price: 1000, status: 0) # $20 total / no discount
+
+        # $100 in other merchant's revenue
+        invoice_item_9a = InvoiceItem.create!(quantity: 2, unit_price: 3000,item_id: item_8.id, invoice_id: invoice_1.id, status: 1) # Other merchant rev
+        invoice_item_9b = InvoiceItem.create!(quantity: 2, unit_price: 2000,item_id: item_9.id, invoice_id: invoice_1.id, status: 2) # Other merchant rev
+
+        expect(invoice_1.discounted_revenue_for_merchant(merchant.id)).to eq(197000)
+      end
+    end
+
+    describe '#enum_integer' do
       it 'returns the integer associated with that status' do
 
         expect(@invoice_1.status).to eq('completed')
