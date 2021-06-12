@@ -3,12 +3,14 @@ require 'rails_helper'
 RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
   before :each do
     @merchant1 = FactoryBot.create(:merchant)
-    @discount1 = @merchant1.bulkdiscounts.create!(percentage: 20.0, quantity_threshold: 20)
-    @discount2 = @merchant1.bulkdiscounts.create!(percentage: 5.0, quantity_threshold: 10)
-    @discount3 = @merchant1.bulkdiscounts.create!(percentage: 3.5, quantity_threshold: 5)
+    @discount1 = @merchant1.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 20)
+    @discount2 = @merchant1.bulk_discounts.create!(percentage: 5.0, quantity_threshold: 10)
+    @discount3 = @merchant1.bulk_discounts.create!(percentage: 3.5, quantity_threshold: 5)
 
     @merchant2 = FactoryBot.create(:merchant)
-    @discount4 = @merchant2.bulkdiscounts.create!(percentage: 15, quantity_threshold: 15)
+    @discount4 = @merchant2.bulk_discounts.create!(percentage: 15, quantity_threshold: 15)
+
+    visit "/merchants/#{@merchant1.id}/bulk_discounts"
   end
 
   it 'shows all of my bulk discount %s and quantity thresholds' do
@@ -23,6 +25,8 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
   end
 
   it 'links to the show page of each bulk discount' do
-    expect(page).to have_link(@discount1.id, :href => "merchants/#{@merchant1.id}/bulk_discounts/#{@discount1.id}")
+    expect(page).to have_link(@discount1.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount1.id))
+    expect(page).to have_link(@discount2.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount2.id))
+    expect(page).to have_link(@discount3.id, :href => merchant_bulk_discount_path(@merchant1.id, @discount3.id))
   end
 end

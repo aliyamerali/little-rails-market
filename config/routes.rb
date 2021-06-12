@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   resources :merchants, only: [:show] do
     get '/dashboard', to: 'dashboard#show'
     scope module: :merchants do
-      resources :bulk_discounts, only: :index
+      resources :bulk_discounts, only: [:index, :show]
       resources :items
       resources :invoices, only: [:index, :show]
       resources :invoice_items, only: :update
