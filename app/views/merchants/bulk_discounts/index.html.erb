@@ -2,13 +2,14 @@
 <h2>Your Bulk Discounts</h2>
 
 <%= link_to "New Discount", new_merchant_bulk_discount_path(@merchant.id) %>
+<br><br>
 
 <table>
   <th>Discount ID</th>
   <th>Percentage</th>
   <th>Quantity Threshold</th>
   <% @discounts.each do |discount| %>
-    <tr>
+    <tr id="discount-<%=discount.id%>">
       <td><%= link_to discount.id, merchant_bulk_discount_path(@merchant.id, discount.id) %></td>
       <td><%= discount.percentage %>%</td>
       <td><%= discount.quantity_threshold %></td>
