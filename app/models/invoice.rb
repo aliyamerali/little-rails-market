@@ -33,6 +33,28 @@ class Invoice < ApplicationRecord
     .sum('invoice_items.unit_price * invoice_items.quantity')
   end
 
+  def invoice_item_discounts(merchant_id)
+    invoice_items
+    .joins(item: {merchant: :bulk_discounts})
+    .where('items.merchant_id = ?', merchant_id)
+    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold')
+    .group('invoice_items.id')
+    .maximum('bulk_discounts.percentage')
+  end
+
+#TO TEST
+  def invoice_item_costs(merchant_id)
+    invoice_items
+    .where('items.merchant_id = ?', merchant_id)
+    .group('invoice_items.id')
+    .sum('invoice_items.unit_price * invoice_items.quantity')
+  end
+
+# TO TEST
+  def discounted_revenue_for_merchant
+
+  end
+
   def enum_integer
     enum_convert = Invoice.statuses
     enum_convert[self.status]
