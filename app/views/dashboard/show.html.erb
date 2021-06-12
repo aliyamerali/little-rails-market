@@ -1,5 +1,8 @@
 <%= render partial: './partials/merchant_nav' %>
 
+
+<%= link_to "Bulk Discounts", merchant_bulk_discounts_path(@merchant.id) %>
+
 <h3>Favorite Customers</h3>
 <% @top_customers.each do |customer| %>
   <p> <%= customer.first_name %> <%= customer.last_name %>:
