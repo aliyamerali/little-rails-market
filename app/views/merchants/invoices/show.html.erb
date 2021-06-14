@@ -16,12 +16,20 @@
     <th> Item Name </th>
     <th> Quantity </th>
     <th> Unit Price </th>
+    <th> Discount </th>
     <th> Status </th>
     <% @invoice_items.each do |invoice_item|  %>
       <tr id="ii-<%= invoice_item.id %>">
         <td> <%= invoice_item.item_name %> </td>
         <td> <%= invoice_item.quantity %> </td>
         <td> <%= number_to_currency(invoice_item.unit_price / 100 ) %> </td>
+        <td>
+            <% discount_id = @invoice.invoice_item_discount(@merchant.id, invoice_item.id) %>
+            <% if discount_id.nil?  %>
+              <p>no discount applied</p> 
+            <% else %>
+              <%= link_to discount_id, merchant_bulk_discount_path(@merchant.id, discount_id)  %> </td>
+            <% end %>
         <td>
           <%= form_with model: [@merchant, invoice_item], local: true do |f| %>
             <%= f.select :status, [['Pending', 0], ['Packaged', 1], ['Shipped', 2]], selected: invoice_item.numeric_status %>

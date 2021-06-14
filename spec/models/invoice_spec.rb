@@ -36,10 +36,10 @@ RSpec.describe Invoice do
     @item_5 = @merchant_2.items.create!(name: 'Bronze Ring', description: 'Jewelery', unit_price: 2000)
 
     #my discounts
-    @merchant.bulk_discounts.create!(percentage: 10.0, quantity_threshold: 8)
-    @merchant.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 15)
-    @merchant.bulk_discounts.create!(percentage: 25.0, quantity_threshold: 19)
-    @merchant.bulk_discounts.create!(percentage: 30.0, quantity_threshold: 25)
+    @discount_1 = @merchant.bulk_discounts.create!(percentage: 10.0, quantity_threshold: 8)
+    @discount_2 = @merchant.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 15)
+    @discount_3 = @merchant.bulk_discounts.create!(percentage: 25.0, quantity_threshold: 19)
+    @discount_4 = @merchant.bulk_discounts.create!(percentage: 30.0, quantity_threshold: 25)
 
     # $2520 for my revenue / $1970 discounted revenue
     @invoice_item_1 = @item_1.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 20, unit_price: 10000, status: 0) # $2000 total / $1500 discounted (25%)
@@ -86,12 +86,12 @@ RSpec.describe Invoice do
     end
 
     describe 'methods to calculate revenue after discounts' do
-      it '#invoice_item_discounts returns the discounted revenue for the invoice only for items belonging to given merchant based on merchant\'s discounts' do
-        expect(@invoice_1.invoice_item_discounts(@merchant.id)[@invoice_item_1.id]).to eq(25)
-        expect(@invoice_1.invoice_item_discounts(@merchant.id)[@invoice_item_2.id]).to eq(10)
-        expect(@invoice_1.invoice_item_discounts(@merchant.id)[@invoice_item_3.id]).to eq(nil)
-        expect(@invoice_1.invoice_item_discounts(@merchant.id)[@invoice_item_4.id]).to eq(nil)
-        expect(@invoice_1.invoice_item_discounts(@merchant.id)[@invoice_item_5.id]).to eq(nil)
+      it '#invoice_item_percent_discount returns the discounted revenue for the invoice only for items belonging to given merchant based on merchant\'s discounts' do
+        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_1.id]).to eq(25)
+        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_2.id]).to eq(10)
+        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_3.id]).to eq(nil)
+        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_4.id]).to eq(nil)
+        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_5.id]).to eq(nil)
       end
 
       it '#invoice_item_undiscounted_revenue returns hash of total undiscounted revenue per invoice_item' do
@@ -102,19 +102,22 @@ RSpec.describe Invoice do
         expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_5.id]).to eq(nil)
       end
 
-      it 'discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
+      it '#discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
         expect(@invoice_1.discounted_revenue_for_merchant(@merchant.id)).to eq(197000)
       end
     end
 
-
-    describe '#enum_integer' do
-      it 'returns the integer associated with that status' do
-
-        expect(@invoice_1.status).to eq('completed')
-        expect(@invoice_1.enum_integer).to eq(1)
-
-      end
+    it '#invoice_item_discount returns the discount id applied to a given item' do
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_1.id)).to eq(@discount_3.id)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_2.id)).to eq(@discount_1.id)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_3.id)).to eq(nil)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_4.id)).to eq(nil)
     end
+
+    it '#enum_integer returns the integer associated with that status' do
+      expect(@invoice_1.status).to eq('completed')
+      expect(@invoice_1.enum_integer).to eq(1)
+    end
+
   end
 end

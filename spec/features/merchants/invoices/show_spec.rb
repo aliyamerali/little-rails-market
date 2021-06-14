@@ -4,8 +4,8 @@ RSpec.describe 'Merchant Invoices Show Page' do
   describe 'show page' do
     before :each do
       allow(GithubService).to receive(:contributors_info).and_return([
-        {id: 26797256, name: 'Molly', contributions: 7},
-        {id: 78388882, name: 'Sa', contributions: 80}
+        {id: 26797256, login: 'Molly', contributions: 7},
+        {id: 78388882, login: 'Sa', contributions: 80}
       ])
       allow(GithubService).to receive(:closed_pulls).and_return([
         {id: 0101010011, name: 'Molly', merged_at: 7},
@@ -36,10 +36,10 @@ RSpec.describe 'Merchant Invoices Show Page' do
       @invoice_2 = @customer_2.invoices.create!(status: 1, created_at: "2012-03-09 14:54:15 UTC")
 
       #my discounts
-      @merchant.bulk_discounts.create!(percentage: 10, quantity_threshold: 15)
-      @merchant.bulk_discounts.create!(percentage: 20, quantity_threshold: 15)
-      @merchant.bulk_discounts.create!(percentage: 25, quantity_threshold: 19)
-      @merchant.bulk_discounts.create!(percentage: 30, quantity_threshold: 25)
+      @discount_1 = @merchant.bulk_discounts.create!(percentage: 10, quantity_threshold: 15)
+      @discount_2 = @merchant.bulk_discounts.create!(percentage: 20, quantity_threshold: 15)
+      @discount_3 = @merchant.bulk_discounts.create!(percentage: 25, quantity_threshold: 19)
+      @discount_4 = @merchant.bulk_discounts.create!(percentage: 30, quantity_threshold: 25)
 
       # items for invoice 1
       @invoice_item_1 = InvoiceItem.create!(quantity: 10, unit_price: 10000, item_id: @item_1.id, invoice_id: @invoice_1.id, status: 1) # $1000 total / no discount
@@ -76,6 +76,18 @@ RSpec.describe 'Merchant Invoices Show Page' do
 
     it 'displays the discounted revenue generated from all of my items on the invoice' do
       expect(page).to have_content 'Discounted revenue: $1,750.00'
+    end
+
+    it 'shows the discount applied to each invoice item' do
+      within "tr#ii-#{@invoice_item_1.id}" do
+        expect(page).to have_content("no discount applied")
+      end
+      within "tr#ii-#{@invoice_item_2.id}" do
+        expect(page).to have_link(@discount_2.id, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_2.id}")
+      end
+      within "tr#ii-#{@invoice_item_3.id}" do
+        expect(page).to have_link(@discount_3.id, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_3.id}")
+      end
     end
 
     it 'can update an invoice item status' do
