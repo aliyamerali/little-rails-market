@@ -37,11 +37,16 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = BulkDiscount.find(params[:id])
 
-    if discount.update(bulk_discount_params)
-      redirect_to merchant_bulk_discount_path(merchant.id, discount.id)
+    if valid_update?(discount.id)
+      if discount.update(bulk_discount_params)
+        redirect_to merchant_bulk_discount_path(merchant.id, discount.id)
+      else
+        redirect_to edit_merchant_bulk_discount_path(merchant.id, discount.id)
+        flash[:alert] = "Error: #{error_message(discount.errors)}"
+      end
     else
       redirect_to edit_merchant_bulk_discount_path(merchant.id, discount.id)
-      flash[:alert] = "Error: #{error_message(discount.errors)}"
+      flash[:alert] = "Error: Cannot update discount while it applies to in-progress invoices"
     end
   end
 
@@ -57,5 +62,19 @@ class Merchants::BulkDiscountsController < ApplicationController
   private
   def bulk_discount_params
     params.require(:bulk_discount).permit(:percentage, :quantity_threshold)
+  end
+
+  def valid_update?(discount_id)
+    discount = BulkDiscount.find(discount_id)
+
+    in_progress_invoices = discount
+                      .merchant
+                      .items
+                      .joins(:invoices)
+                      .where('invoice_items.quantity >= ?', discount.quantity_threshold)
+                      .where('invoices.status = ?', 0)
+
+
+    in_progress_invoices.length == 0
   end
 end
