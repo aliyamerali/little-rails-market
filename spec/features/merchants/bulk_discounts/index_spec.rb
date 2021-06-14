@@ -2,6 +2,13 @@ require 'rails_helper'
 
 RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
   before :each do
+    allow(HolidayService).to receive(:upcoming_holiday_info).and_return(
+      [{:date=>"2021-07-05", :localName=>"Independence Day", :name=>"Independence Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+        {:date=>"2021-09-06", :localName=>"Labor Day", :name=>"Labour Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+        {:date=>"2021-11-11", :localName=>"Veterans Day", :name=>"Veterans Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+        {:date=>"2021-11-25", :localName=>"Thanksgiving Day", :name=>"Thanksgiving Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>1863, :type=>"Public"},
+        ])
+        
     @merchant1 = FactoryBot.create(:merchant)
     @discount1 = @merchant1.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 20)
     @discount2 = @merchant1.bulk_discounts.create!(percentage: 5.0, quantity_threshold: 10)
@@ -11,6 +18,18 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
     @discount4 = @merchant2.bulk_discounts.create!(percentage: 15, quantity_threshold: 15)
 
     visit "/merchants/#{@merchant1.id}/bulk_discounts"
+  end
+
+  it 'shows the next three holidays upcoming' do
+    within("#upcoming-holidays") do
+      expect(page).to have_content("Upcoming Holidays")
+      expect(page).to have_content("2021-07-05")
+      expect(page).to have_content("Independence Day")
+      expect(page).to have_content("2021-09-06")
+      expect(page).to have_content("Labour Day")
+      expect(page).to have_content("2021-11-11")
+      expect(page).to have_content("Veterans Day")
+    end
   end
 
   it 'shows a link to create a new discount' do

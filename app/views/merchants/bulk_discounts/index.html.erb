@@ -20,3 +20,15 @@
     </tr>
   <% end %>
 </table>
+
+<section id="upcoming-holidays">
+  <h3>Upcoming Holidays</h3>
+  <table>
+    <% @holidays.each do |holiday| %>
+      <tr>
+        <td><%= holiday[:date] %></td>
+        <td><%= holiday[:name] %></td>
+      </tr>
+    <% end %>
+  </table>
+</section>
