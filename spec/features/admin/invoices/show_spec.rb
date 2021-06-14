@@ -17,12 +17,23 @@ RSpec.describe 'admin/invoices/show.html.erb' do
     @customer_1 = Customer.create!(first_name: 'Madi', last_name: 'Johnson')
     @invoice_1 = @customer_1.invoices.create!(status: 1, created_at: '2001-01-01')
     @merchant_1 = Merchant.create!(name: "Ralph's Monkey Hut")
-    @item_1 = @merchant_1.items.create!(name: 'Pogs', description: 'Stack of pogs.', unit_price: 500,)
-    @item_2 = @merchant_1.items.create!(name: 'Frog statue', description: 'Statue of a frog', unit_price: 10000,)
-    @item_3 = @merchant_1.items.create!(name: 'Rabid Wolverine', description: 'No refunds', unit_price: 10,)
-    InvoiceItem.create!(quantity: 50, unit_price: 550, status: 0, item: @item_1, invoice: @invoice_1)
-    InvoiceItem.create!(quantity: 3, unit_price: 11500, status: 1, item: @item_2, invoice: @invoice_1)
-    InvoiceItem.create!(quantity: 1, unit_price: 16, status: 2, item: @item_3, invoice: @invoice_1)
+    @merchant_2 = Merchant.create!(name: "Ralph's Monkey Hut 2")
+    @item_1 = @merchant_1.items.create!(name: 'Pogs', description: 'Stack of pogs.', unit_price: 500)
+    @item_2 = @merchant_1.items.create!(name: 'Frog statue', description: 'Statue of a frog', unit_price: 10000)
+    @item_3 = @merchant_1.items.create!(name: 'Rabid Wolverine', description: 'No refunds', unit_price: 10)
+    @item_4 = @merchant_2.items.create!(name: 'Rabid Wolverine2', description: 'No refunds2', unit_price: 101)
+    @item_5 = @merchant_2.items.create!(name: 'Rabid Wolverine3', description: 'No refunds3', unit_price: 102)
+    @discount_1 = @merchant_1.bulk_discounts.create!(percentage: 10, quantity_threshold: 2)
+    @discount_2 = @merchant_1.bulk_discounts.create!(percentage: 20, quantity_threshold: 2)
+    @discount_2 = @merchant_1.bulk_discounts.create!(percentage: 20, quantity_threshold: 2)
+    @discount_3 = @merchant_1.bulk_discounts.create!(percentage: 25, quantity_threshold: 45)
+    @discount_4 = @merchant_2.bulk_discounts.create!(percentage: 5, quantity_threshold: 5)
+    @discount_5 = @merchant_2.bulk_discounts.create!(percentage: 10, quantity_threshold: 10)
+    InvoiceItem.create!(quantity: 50, unit_price: 550, status: 0, item: @item_1, invoice: @invoice_1) #discount: 25% / total rev = 27,500 / disc rev = 20,625
+    InvoiceItem.create!(quantity: 3, unit_price: 11500, status: 1, item: @item_2, invoice: @invoice_1) #discount: 20% / total rev = 34,500 / disc rev = 27,600
+    InvoiceItem.create!(quantity: 1, unit_price: 16, status: 2, item: @item_3, invoice: @invoice_1) #discount: none / total rev = 16
+    InvoiceItem.create!(quantity: 5, unit_price: 800, status: 2, item: @item_4, invoice: @invoice_1) #discount: 5% / total rev = 4,000 / disc rev = 3,800
+    InvoiceItem.create!(quantity: 10, unit_price: 650, status: 2, item: @item_5, invoice: @invoice_1) #discount: 12% / total rev = 6500 / disc rev = 5,850
 
     visit "/admin/invoices/#{@invoice_1.id}"
   end
@@ -52,7 +63,12 @@ RSpec.describe 'admin/invoices/show.html.erb' do
   end
   describe 'total revenue' do
     it 'shows the total revenue the invoice will generate' do
-      expect(page).to have_content('Total Revenue: $620.16')
+      expect(page).to have_content('Total Revenue: $725.16')
+    end
+  end
+  describe 'discounted revenue' do
+    it 'shows the discounted revenue for the invoice' do
+      expect(page).to have_content('Discounted Revenue: $578.91')
     end
   end
 end
