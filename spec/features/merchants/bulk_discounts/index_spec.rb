@@ -13,6 +13,24 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
     visit "/merchants/#{@merchant1.id}/bulk_discounts"
   end
 
+  it 'shows the next three holidays upcoming' do
+    allow(HolidayService).to receive(:upcoming_holiday_info).and_return(
+      [{:date=>"2021-07-05", :localName=>"Independence Day", :name=>"Independence Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+       {:date=>"2021-09-06", :localName=>"Labor Day", :name=>"Labour Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+       {:date=>"2021-11-11", :localName=>"Veterans Day", :name=>"Veterans Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
+       {:date=>"2021-11-25", :localName=>"Thanksgiving Day", :name=>"Thanksgiving Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>1863, :type=>"Public"},
+         ])
+
+    within(".upcoming-holidays") do
+      expect(page).to have_content("2021-07-05")
+      expect(page).to have_content("Independence Day")
+      expect(page).to have_content("2021-09-06")
+      expect(page).to have_content("Labour Day")
+      expect(page).to have_content("2021-11-11")
+      expect(page).to have_content("Veterans Day")
+    end
+  end
+
   it 'shows a link to create a new discount' do
     page.find_link("New Discount")[new_merchant_bulk_discount_path(@merchant1.id)]
   end
