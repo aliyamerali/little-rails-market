@@ -102,16 +102,16 @@ RSpec.describe Invoice do
         expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_5.id]).to eq(nil)
       end
 
-      it 'discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
+      it '#discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
         expect(@invoice_1.discounted_revenue_for_merchant(@merchant.id)).to eq(197000)
       end
     end
 
     it '#invoice_item_discount returns the discount id applied to a given item' do
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_1.id).id).to eq(@discount3.id)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_2.id).id).to eq(@discount1.id)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_3.id).id).to eq(nil)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_4.id).id).to eq(nil)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_1.id)).to eq(@discount_3.id)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_2.id)).to eq(@discount_1.id)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_3.id)).to eq(nil)
+      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_4.id)).to eq(nil)
     end
 
     it '#enum_integer returns the integer associated with that status' do

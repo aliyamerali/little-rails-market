@@ -67,4 +67,28 @@ class Invoice < ApplicationRecord
     .group('invoice_items.id')
     .sum('invoice_items.unit_price * invoice_items.quantity')
   end
+
+  def invoice_item_discount(merchant_id, invoice_item_id)
+    if invoice_items_discounts(merchant_id).exists?(invoice_item_id)
+      invoice_items_discounts(merchant_id).where('invoice_items.id = ?', invoice_item_id)
+                                          .order('discount_percentage DESC')
+                                          .first
+                                          .discount_id
+    else
+      "no discount applied"
+    end
+  end
+
+  private
+  def invoice_items_discounts(merchant_id)
+    all_discounts = invoice_items
+                    .joins(item: {merchant: :bulk_discounts})
+                    .select('invoice_items.id',
+                            'invoice_items.unit_price',
+                            'invoice_items.quantity',
+                            'bulk_discounts.id as discount_id',
+                            'bulk_discounts.quantity_threshold as discount_threshold',
+                            'bulk_discounts.percentage as discount_percentage')
+                    .where('items.merchant_id = ? AND invoice_items.quantity >= bulk_discounts.quantity_threshold', merchant_id)
+  end
 end
