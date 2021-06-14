@@ -5,7 +5,6 @@ RSpec.describe GithubService do
     describe '#upcoming_holiday_info' do
       it 'returns a collection of upcoming holidays' do
         holidays = HolidayService.upcoming_holiday_info
-        # binding.pry
 
         expect(holidays[0][:countryCode]).to eq("US")
         expect(holidays[0][:type]).to eq("Public")
