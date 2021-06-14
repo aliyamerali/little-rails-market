@@ -38,9 +38,8 @@ class Invoice < ApplicationRecord
     enum_convert[self.status]
   end
 
-# TO TEST
   def discounted_revenue_for_merchant(merchant_id)
-    discounts = invoice_item_discounts(merchant_id)
+    discounts = invoice_item_percent_discount(merchant_id)
     initial_revenue = invoice_item_undiscounted_revenue(merchant_id)
 
     initial_revenue.sum do |invoice_item_id, revenue|
@@ -52,8 +51,8 @@ class Invoice < ApplicationRecord
     end
   end
 
-
-  def invoice_item_discounts(merchant_id)
+  # Helpers for #discounted_revenue_for_merchant
+  def invoice_item_percent_discount(merchant_id)
     invoice_items
     .joins(item: {merchant: :bulk_discounts})
     .where('items.merchant_id = ?', merchant_id)
