@@ -8,13 +8,13 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
         {:date=>"2021-11-11", :localName=>"Veterans Day", :name=>"Veterans Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>nil, :type=>"Public"},
         {:date=>"2021-11-25", :localName=>"Thanksgiving Day", :name=>"Thanksgiving Day", :countryCode=>"US", :fixed=>false, :global=>true, :counties=>nil, :launchYear=>1863, :type=>"Public"},
         ])
-        
-    @merchant1 = FactoryBot.create(:merchant)
+
+    @merchant1 = Merchant.create!(name: "Sassy Spoons")
     @discount1 = @merchant1.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 20)
     @discount2 = @merchant1.bulk_discounts.create!(percentage: 5.0, quantity_threshold: 10)
     @discount3 = @merchant1.bulk_discounts.create!(percentage: 3.5, quantity_threshold: 5)
 
-    @merchant2 = FactoryBot.create(:merchant)
+    @merchant2 = Merchant.create!(name: "Tees by Tom")
     @discount4 = @merchant2.bulk_discounts.create!(percentage: 15, quantity_threshold: 15)
 
     visit "/merchants/#{@merchant1.id}/bulk_discounts"
