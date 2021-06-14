@@ -75,7 +75,7 @@ class Invoice < ApplicationRecord
                                           .first
                                           .discount_id
     else
-      "no discount applied"
+      nil
     end
   end
 
