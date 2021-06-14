@@ -40,6 +40,7 @@ RSpec.describe Invoice do
     @discount_2 = @merchant.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 15)
     @discount_3 = @merchant.bulk_discounts.create!(percentage: 25.0, quantity_threshold: 19)
     @discount_4 = @merchant.bulk_discounts.create!(percentage: 30.0, quantity_threshold: 25)
+    @discount_5 = @merchant_2.bulk_discounts.create!(percentage: 30.0, quantity_threshold: 11)
 
     # $2520 for my revenue / $1970 discounted revenue
     @invoice_item_1 = @item_1.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 20, unit_price: 10000, status: 0) # $2000 total / $1500 discounted (25%)
@@ -47,12 +48,12 @@ RSpec.describe Invoice do
     @invoice_item_3 = @item_3.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # $20 total / no discount
 
     # Other merchant's revenue
-    @invoice_item_4 = InvoiceItem.create!(quantity: 10, unit_price: 3000,item_id: @item_4.id, invoice_id: @invoice_1.id, status: 0) # Other merchant rev
-    @invoice_item_5 = InvoiceItem.create!(quantity: 15, unit_price: 2000,item_id: @item_5.id, invoice_id: @invoice_1.id, status: 2) # Other merchant rev
-    @invoice_item_6 = InvoiceItem.create!(quantity: 10, unit_price: 3000,item_id: @item_4.id, invoice_id: @invoice_2.id, status: 2) # Other merchant rev
-    @invoice_item_7 = InvoiceItem.create!(quantity: 15, unit_price: 2000,item_id: @item_5.id, invoice_id: @invoice_3.id, status: 0) # Other merchant rev
-    @invoice_item_8 = InvoiceItem.create!(quantity: 10, unit_price: 3000,item_id: @item_4.id, invoice_id: @invoice_4.id, status: 2) # Other merchant rev
-    @invoice_item_9 = InvoiceItem.create!(quantity: 15, unit_price: 2000,item_id: @item_5.id, invoice_id: @invoice_4.id, status: 1) # Other merchant rev
+    @invoice_item_4 = InvoiceItem.create!(quantity: 10, unit_price: 3000,item_id: @item_4.id, invoice_id: @invoice_1.id, status: 0) # 30,000 total
+    @invoice_item_7 = InvoiceItem.create!(quantity: 15, unit_price: 2000,item_id: @item_5.id, invoice_id: @invoice_1.id, status: 2) # 30,000 / 21,000 discounted
+    @invoice_item_5 = InvoiceItem.create!(quantity: 10, unit_price: 5000,item_id: @item_4.id, invoice_id: @invoice_2.id, status: 2) # 50,000
+    @invoice_item_8 = InvoiceItem.create!(quantity: 15, unit_price: 4000,item_id: @item_5.id, invoice_id: @invoice_3.id, status: 0) # 60,000 / 42,000 discounted
+    @invoice_item_6 = InvoiceItem.create!(quantity: 10, unit_price: 9000,item_id: @item_4.id, invoice_id: @invoice_4.id, status: 2) # 90,000
+    @invoice_item_9 = InvoiceItem.create!(quantity: 15, unit_price: 6000,item_id: @item_5.id, invoice_id: @invoice_4.id, status: 1) # 90,000 / 63,000 discounted
   end
 
   describe 'class methods' do
@@ -73,10 +74,12 @@ RSpec.describe Invoice do
       expect(actual.sale_quantity).to eq(20)
     end
 
-    it '#total_revenue returns all items from an invoice and the amount they sold for and number sold' do
-      actual = @invoice_1.total_revenue
+    it '#total_revenue returns sum of items unit_price * quantity for all items on an invoice' do
+      expect(@invoice_1.total_revenue).to eq(312000)
+    end
 
-      expect(actual).to eq(312000)
+    it '#discounted_revenue returns total revenue less discounts for items across multiple merchants' do
+      expect(@invoice_1.discounted_revenue).to eq(2480)
     end
 
     it '#total_revenue_for_merchant returns the total revenue expected for the invoice only for items belonging to given merchant' do
