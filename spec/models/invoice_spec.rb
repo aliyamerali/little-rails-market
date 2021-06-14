@@ -79,7 +79,7 @@ RSpec.describe Invoice do
     end
 
     it '#discounted_revenue returns total revenue less discounts for items across multiple merchants' do
-      expect(@invoice_1.discounted_revenue).to eq(2480)
+      expect(@invoice_1.discounted_revenue).to eq(248000)
     end
 
     it '#total_revenue_for_merchant returns the total revenue expected for the invoice only for items belonging to given merchant' do
