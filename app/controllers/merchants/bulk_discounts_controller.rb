@@ -54,9 +54,13 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = BulkDiscount.find(params[:id])
 
-    merchant.bulk_discounts.delete(discount)
-
-    redirect_to merchant_bulk_discounts_path(merchant.id)
+    if discount.update_valid?
+      merchant.bulk_discounts.delete(discount)
+      redirect_to merchant_bulk_discounts_path(merchant.id)
+    else
+      redirect_to merchant_bulk_discounts_path(merchant.id)
+      flash[:alert] = "Error: Cannot update discount while it applies to in-progress invoices"
+    end
   end
 
   private
