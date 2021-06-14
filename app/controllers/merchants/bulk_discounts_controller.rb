@@ -37,7 +37,7 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = BulkDiscount.find(params[:id])
 
-    if valid_update?(discount.id)
+    if discount.update_valid?
       if discount.update(bulk_discount_params)
         redirect_to merchant_bulk_discount_path(merchant.id, discount.id)
       else
@@ -64,17 +64,4 @@ class Merchants::BulkDiscountsController < ApplicationController
     params.require(:bulk_discount).permit(:percentage, :quantity_threshold)
   end
 
-  def valid_update?(discount_id)
-    discount = BulkDiscount.find(discount_id)
-
-    in_progress_invoices = discount
-                      .merchant
-                      .items
-                      .joins(:invoices)
-                      .where('invoice_items.quantity >= ?', discount.quantity_threshold)
-                      .where('invoices.status = ?', 0)
-
-
-    in_progress_invoices.length == 0
-  end
 end
