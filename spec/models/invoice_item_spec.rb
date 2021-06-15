@@ -52,6 +52,41 @@ RSpec.describe InvoiceItem do
     end
 
     describe 'instance methods' do
+      describe '#discount_applied' do
+        it 'returns id of the discount applied to an invoice_item, if any' do
+          @merchant = Merchant.create!(name: "Little Shop of Horrors")
+          @merchant_2 = Merchant.create!(name: "Little Shop of Horrors")
+
+          @customer = Customer.create!(first_name: 'Audrey', last_name: 'I')
+          @invoice_1 = @customer.invoices.create!(status: 1, updated_at: '2021-03-01')
+
+          # my items on invoice
+          @item_1 = @merchant.items.create!(name: 'Audrey II', description: 'Large, man-eating plant', unit_price: '100000000', enabled: true)
+          @item_2 = @merchant.items.create!(name: 'Bouquet of roses', description: '12 red roses', unit_price: '1900', enabled: true)
+          @item_3 = @merchant.items.create!(name: 'Echevaria', description: 'Peacock varietal', unit_price: '3100', enabled: true)
+
+          # other merchant items on invoice
+          @item_4 = @merchant_2.items.create!(name: 'Silver Bracelet', description: 'Accessories', unit_price: 3000)
+
+          #my discounts
+          @discount_1 = @merchant.bulk_discounts.create!(percentage: 10.0, quantity_threshold: 8)
+          @discount_2 = @merchant.bulk_discounts.create!(percentage: 20.0, quantity_threshold: 15)
+          @discount_3 = @merchant.bulk_discounts.create!(percentage: 25.0, quantity_threshold: 19)
+
+          # $2520 for my revenue / $1970 discounted revenue
+          @invoice_item_1 = @item_1.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 20, unit_price: 10000, status: 0) # $2000 total / $1500 discounted (25%)
+          @invoice_item_2 = @item_2.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 10, unit_price: 5000, status: 0) # $500 total / $450 discounted (10%)
+          @invoice_item_3 = @item_3.invoice_items.create!(invoice_id: @invoice_1.id, quantity: 2, unit_price: 1000, status: 1) # $20 total / no discount
+
+          # Other merchant's revenue
+          @invoice_item_4 = InvoiceItem.create!(quantity: 10, unit_price: 3000,item_id: @item_4.id, invoice_id: @invoice_1.id, status: 0) # 30,000 total
+
+          expect(@invoice_item_1.discount_applied).to eq(@discount_3)
+          expect(@invoice_item_2.discount_applied).to eq(@discount_1)
+          expect(@invoice_item_3.discount_applied).to eq(nil)
+          expect(@invoice_item_4.discount_applied).to eq(nil)
+        end
+      end
       describe '#numeric_status' do
         it 'returns the status of the invoice item as an integer for select menu' do
           merchant = Merchant.create!(name: 'Schroeder-Jerde')

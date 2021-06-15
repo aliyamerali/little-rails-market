@@ -92,13 +92,6 @@ RSpec.describe Invoice do
       expect(@invoice_1.discounted_revenue_for_merchant(@merchant.id)).to eq(197000)
     end
 
-    it '#invoice_item_discount returns the discount id applied to a given item' do
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_1.id)).to eq(@discount_3.id)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_2.id)).to eq(@discount_1.id)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_3.id)).to eq(nil)
-      expect(@invoice_1.invoice_item_discount(@merchant.id, @invoice_item_4.id)).to eq(nil)
-    end
-
     it '#enum_integer returns the integer associated with that status' do
       expect(@invoice_1.status).to eq('completed')
       expect(@invoice_1.enum_integer).to eq(1)

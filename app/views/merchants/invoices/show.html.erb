@@ -24,11 +24,10 @@
         <td> <%= invoice_item.quantity %> </td>
         <td> <%= number_to_currency(invoice_item.unit_price / 100 ) %> </td>
         <td>
-            <% discount_id = @invoice.invoice_item_discount(@merchant.id, invoice_item.id) %>
-            <% if discount_id.nil?  %>
-              <p>no discount applied</p> 
+            <% if invoice_item.discount_applied.nil?  %>
+              <p>no discount applied</p>
             <% else %>
-              <%= link_to discount_id, merchant_bulk_discount_path(@merchant.id, discount_id)  %> </td>
+              <%= link_to invoice_item.discount_applied.id, merchant_bulk_discount_path(@merchant.id, invoice_item.discount_applied.id)  %> </td>
             <% end %>
         <td>
           <%= form_with model: [@merchant, invoice_item], local: true do |f| %>

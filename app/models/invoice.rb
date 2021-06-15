@@ -31,7 +31,12 @@ class Invoice < ApplicationRecord
     discounted_revenue = 0
 
     invoice_items.each do |invoice_item|
-      discounts = invoice_item_percent_discount(invoice_item.item.merchant_id)
+      discounts = invoice_items
+                  .joins(item: {merchant: :bulk_discounts})
+                  .where('items.merchant_id = ?', invoice_item.item.merchant_id)
+                  .where('invoice_items.quantity >= bulk_discounts.quantity_threshold')
+                  .group('invoice_items.id')
+                  .maximum('bulk_discounts.percentage')
       discount = discounts[invoice_item.id]
 
       if discount.nil?
@@ -55,20 +60,6 @@ class Invoice < ApplicationRecord
     enum_convert[self.status]
   end
 
-# # TO GET DISCOUNT ID
-  # discounted_items = items
-  # .select('DISTINCT ON (invoice_items.id)
-  # invoice_items.id,
-  # items.id as item_id,
-  # bulk_discounts.id AS discount_id,
-  # bulk_discounts.percentage AS discount_percentage,
-  # (invoice_items.unit_price * invoice_items.quantity) as total_revenue,
-  # ((invoice_items.unit_price * invoice_items.quantity)*(1-(bulk_discounts.percentage / 100))) AS discounted_revenue')
-  # .joins(item: {merchant: :bulk_discounts})
-  # .where('items.merchant_id = ?', merchant_id)
-  # .where('invoice_items.quantity >= bulk_discounts.quantity_threshold')
-  # .order('invoice_items.id, discount_percentage DESC')
-
   def discounted_revenue_for_merchant(merchant_id)
     item_discounts = invoice_items
                 .select('DISTINCT ON (invoice_items.id)
@@ -88,59 +79,4 @@ class Invoice < ApplicationRecord
     end
   end
 
-  # def discounted_revenue_for_merchant(merchant_id)
-  #   discounts = invoice_item_percent_discount(merchant_id)
-  #   initial_revenue = invoice_item_undiscounted_revenue(merchant_id)
-  #
-  #   initial_revenue.sum do |invoice_item_id, revenue|
-  #     if !discounts[invoice_item_id].nil?
-  #       revenue * (1.0 - discounts[invoice_item_id]/100.0)
-  #     else
-  #       revenue
-  #     end
-  #   end
-  # end
-
-  # Helpers for #discounted_revenue_for_merchant
-  def invoice_item_percent_discount(merchant_id)
-    invoice_items
-    .joins(item: {merchant: :bulk_discounts})
-    .where('items.merchant_id = ?', merchant_id)
-    .where('invoice_items.quantity >= bulk_discounts.quantity_threshold')
-    .group('invoice_items.id')
-    .maximum('bulk_discounts.percentage')
-  end
-
-  # Helpers for #discounted_revenue_for_merchant
-  def invoice_item_undiscounted_revenue(merchant_id)
-    items
-    .where('items.merchant_id = ?', merchant_id)
-    .group('invoice_items.id')
-    .sum('invoice_items.unit_price * invoice_items.quantity')
-  end
-
-  def invoice_item_discount(merchant_id, invoice_item_id)
-    if invoice_items_discounts(merchant_id).exists?(invoice_item_id)
-      invoice_items_discounts(merchant_id)
-      .where('invoice_items.id = ?', invoice_item_id)
-      .order('discount_percentage DESC')
-      .first
-      .discount_id
-    else
-      nil
-    end
-  end
-
-  private
-  def invoice_items_discounts(merchant_id)
-    invoice_items
-    .joins(item: {merchant: :bulk_discounts})
-    .select('invoice_items.id',
-            'invoice_items.unit_price',
-            'invoice_items.quantity',
-            'bulk_discounts.id as discount_id',
-            'bulk_discounts.quantity_threshold as discount_threshold',
-            'bulk_discounts.percentage as discount_percentage')
-    .where('items.merchant_id = ? AND invoice_items.quantity >= bulk_discounts.quantity_threshold', merchant_id)
-  end
 end
