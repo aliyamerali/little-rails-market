@@ -13,4 +13,8 @@ class BulkDiscount < ApplicationRecord
     in_progress_invoices.length == 0
   end
 
+  def discount_valid?
+
+  end
+
 end

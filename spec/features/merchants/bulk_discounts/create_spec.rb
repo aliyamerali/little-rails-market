@@ -31,6 +31,20 @@ RSpec.describe 'Bulk Discount create', type: :feature do
     expect(page).to have_content "Error: Quantity threshold can't be blank"
   end
 
+  it 'shows an error message if the discount terms are invalid based on other discounts' do
+    fill_in "Percentage", with: 20.0
+    fill_in "Quantity Threshold", with: 10
+    click_button "Create Bulk discount"
+
+    visit new_merchant_bulk_discount_path(@merchant1.id)
+    fill_in "Percentage", with: 15
+    fill_in "Quantity Threshold", with: 15
+    click_button "Create Bulk discount"
+
+    expect(page).to have_current_path(new_merchant_bulk_discount_path(@merchant1.id))
+    expect(page).to have_content "Error: Discount terms invalid - another discount will always supersede"
+  end
+
   it 'redirects to the merchants discount index, showing new discount' do
     fill_in "Percentage", with: 15.5
     fill_in "Quantity Threshold", with: 15
