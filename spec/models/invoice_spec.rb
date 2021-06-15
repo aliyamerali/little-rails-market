@@ -83,9 +83,7 @@ RSpec.describe Invoice do
     end
 
     it '#total_revenue_for_merchant returns the total revenue expected for the invoice only for items belonging to given merchant' do
-      actual = @invoice_1.total_revenue_for_merchant(@merchant.id)
-
-      expect(actual).to eq(252000)
+      expect(@invoice_1.total_revenue_for_merchant(@merchant.id)).to eq(252000)
     end
 
     it '#discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
