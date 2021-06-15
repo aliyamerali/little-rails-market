@@ -37,6 +37,7 @@ RSpec.describe 'admin/invoices/show.html.erb' do
 
     visit "/admin/invoices/#{@invoice_1.id}"
   end
+
   describe 'visit' do
     it 'displays invoice data' do
       expect(page).to have_content(@invoice_1.id)
@@ -48,6 +49,7 @@ RSpec.describe 'admin/invoices/show.html.erb' do
       expect(page).to have_content(@customer_1.last_name)
     end
   end
+
   describe 'items on invoice' do
     it 'displays all of the items on the invoice' do
       expect(page).to have_content(@item_1.name)
@@ -61,14 +63,17 @@ RSpec.describe 'admin/invoices/show.html.erb' do
       expect(page).to have_content('$0.16')
     end
   end
+
   describe 'total revenue' do
     it 'shows the total revenue the invoice will generate' do
       expect(page).to have_content('Total Revenue: $725.16')
     end
   end
+
   describe 'discounted revenue' do
     it 'shows the discounted revenue for the invoice' do
       expect(page).to have_content('Discounted Revenue: $578.91')
     end
   end
+  
 end
