@@ -88,26 +88,8 @@ RSpec.describe Invoice do
       expect(actual).to eq(252000)
     end
 
-    describe 'methods to calculate revenue after discounts' do
-      it '#invoice_item_percent_discount returns the discounted revenue for the invoice only for items belonging to given merchant based on merchant\'s discounts' do
-        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_1.id]).to eq(25)
-        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_2.id]).to eq(10)
-        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_3.id]).to eq(nil)
-        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_4.id]).to eq(nil)
-        expect(@invoice_1.invoice_item_percent_discount(@merchant.id)[@invoice_item_5.id]).to eq(nil)
-      end
-
-      it '#invoice_item_undiscounted_revenue returns hash of total undiscounted revenue per invoice_item' do
-        expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_1.id]).to eq(200_000)
-        expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_2.id]).to eq(50_000)
-        expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_3.id]).to eq(2_000)
-        expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_4.id]).to eq(nil)
-        expect(@invoice_1.invoice_item_undiscounted_revenue(@merchant.id)[@invoice_item_5.id]).to eq(nil)
-      end
-
-      it '#discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
-        expect(@invoice_1.discounted_revenue_for_merchant(@merchant.id)).to eq(197000)
-      end
+    it '#discounted_revenue_for_merchant calculates undiscounted revenue - discount for total discounted revenue' do
+      expect(@invoice_1.discounted_revenue_for_merchant(@merchant.id)).to eq(197000)
     end
 
     it '#invoice_item_discount returns the discount id applied to a given item' do
