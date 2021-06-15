@@ -53,7 +53,7 @@ RSpec.describe 'Merchant\'s Bulk Discount edit', type: :feature do
     expect(page).to have_current_path( "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_1.id}")
     expect(page).to have_content("Percentage: 12.5%")
     expect(page).to have_content("Quantity Threshold: 25")
-    expect(page).to_not have_content("Percentage: 20.0%")
-    expect(page).to_not have_content("Quantity Threshold: 20")
+    expect(page).to_not have_content("Percentage: 10.0%")
+    expect(page).to_not have_content("Quantity Threshold: 10")
   end
 end

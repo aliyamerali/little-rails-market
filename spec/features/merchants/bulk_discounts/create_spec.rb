@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Bulk Discount create', type: :feature do
   before :each do
-    @merchant1 = FactoryBot.create(:merchant)
-    @merchant2 = FactoryBot.create(:merchant)
+    @merchant1 = Merchant.create!(name: "Sassy Spoons")
+    @merchant2 = Merchant.create!(name: "Donuts by Doug")
 
     visit new_merchant_bulk_discount_path(@merchant1.id)
   end
@@ -42,7 +42,7 @@ RSpec.describe 'Bulk Discount create', type: :feature do
     within("#discount-#{new_discount.id}") do
       expect(page).to have_content(new_discount.percentage)
       expect(page).to have_content(new_discount.quantity_threshold)
-      page.find_link(new_discount.id)[merchant_bulk_discount_path(@merchant1.id, new_discount.id)]
+      page.find_link(new_discount.id.to_s)[merchant_bulk_discount_path(@merchant1.id, new_discount.id)]
     end
   end
 

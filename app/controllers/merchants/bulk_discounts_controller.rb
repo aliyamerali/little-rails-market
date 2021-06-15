@@ -17,7 +17,6 @@ class Merchants::BulkDiscountsController < ApplicationController
 
   def create
     merchant = Merchant.find(params[:merchant_id])
-
     discount = merchant.bulk_discounts.new(bulk_discount_params)
 
     if discount.save
