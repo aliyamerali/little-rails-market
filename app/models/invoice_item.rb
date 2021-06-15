@@ -9,6 +9,15 @@ class InvoiceItem < ApplicationRecord
     .where("invoice_items.invoice_id = #{invoice_id} and items.merchant_id = #{merchant_id}")
   end
 
+  def discount_applied
+    item
+    .merchant
+    .bulk_discounts
+    .where('bulk_discounts.quantity_threshold <= ?', self.quantity)
+    .order('bulk_discounts.percentage DESC')
+    .first
+  end
+
   def numeric_status
     InvoiceItem.statuses[status]
   end
