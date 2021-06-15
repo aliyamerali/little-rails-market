@@ -28,25 +28,9 @@ class Invoice < ApplicationRecord
   end
 
   def discounted_revenue
-    discounted_revenue = 0
-
-    invoice_items.each do |invoice_item|
-      discounts = invoice_items
-                  .joins(item: {merchant: :bulk_discounts})
-                  .where('items.merchant_id = ?', invoice_item.item.merchant_id)
-                  .where('invoice_items.quantity >= bulk_discounts.quantity_threshold')
-                  .group('invoice_items.id')
-                  .maximum('bulk_discounts.percentage')
-      discount = discounts[invoice_item.id]
-
-      if discount.nil?
-        discounted_revenue += invoice_item.quantity * invoice_item.unit_price
-      else
-        discounted_revenue += ((invoice_item.quantity * invoice_item.unit_price) * (1.0 - discount/100.0))
-      end
+    all_items_discounts.sum do |item|
+      item.total_revenue * (1-(item.discount_percentage / 100))
     end
-
-    discounted_revenue
   end
 
   def total_revenue_for_merchant(merchant_id)
@@ -56,7 +40,7 @@ class Invoice < ApplicationRecord
   end
 
   def discounted_revenue_for_merchant(merchant_id)
-    item_discounts(merchant_id).sum do |item|
+    merchants_items_discounts(merchant_id).sum do |item|
       item.total_revenue * (1-(item.discount_percentage / 100))
     end
   end
@@ -67,7 +51,21 @@ class Invoice < ApplicationRecord
   end
 
   private
-  def item_discounts(merchant_id)
+  def all_items_discounts
+    invoice_items
+    .select('DISTINCT ON (invoice_items.id)
+            invoice_items.id,
+            CASE
+              WHEN invoice_items.quantity >= bulk_discounts.quantity_threshold
+              THEN bulk_discounts.percentage
+              ELSE 0
+              END AS discount_percentage,
+            (invoice_items.unit_price * invoice_items.quantity) as total_revenue')
+    .joins(item: {merchant: :bulk_discounts})
+    .order('invoice_items.id, discount_percentage DESC')
+  end
+
+  def merchants_items_discounts(merchant_id)
     invoice_items
     .select('DISTINCT ON (invoice_items.id)
             invoice_items.id,
@@ -81,5 +79,4 @@ class Invoice < ApplicationRecord
     .where('items.merchant_id = ?', merchant_id)
     .order('invoice_items.id, discount_percentage DESC')
   end
-
 end
