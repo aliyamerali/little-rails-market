@@ -83,10 +83,10 @@ RSpec.describe 'Merchant Invoices Show Page' do
         expect(page).to have_content("no discount applied")
       end
       within "tr#ii-#{@invoice_item_2.id}" do
-        expect(page).to have_link(@discount_2.id, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_2.id}")
+        expect(page).to have_link(@discount_2.id.to_s, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_2.id}")
       end
       within "tr#ii-#{@invoice_item_3.id}" do
-        expect(page).to have_link(@discount_3.id, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_3.id}")
+        expect(page).to have_link(@discount_3.id.to_s, :href => "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_3.id}")
       end
     end
 

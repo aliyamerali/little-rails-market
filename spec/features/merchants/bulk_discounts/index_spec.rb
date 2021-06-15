@@ -40,11 +40,13 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
       expect(page).to have_content("Labour Day")
       expect(page).to have_content("2021-11-11")
       expect(page).to have_content("Veterans Day")
+      expect(page).to_not have_content("2021-11-35")
+      expect(page).to_not have_content("Thanksgiving Day")
     end
   end
 
   it 'shows a link to create a new discount' do
-    page.find_link("New Discount")[new_merchant_bulk_discount_path(@merchant1.id)]
+    page.find_link("New Discount")["merchants/#{@merchant1.id}/bulk_discounts/new"]
   end
 
   it 'shows all of my bulk discount %s and quantity thresholds' do
@@ -64,18 +66,21 @@ RSpec.describe 'Merchant\'s Bulk Discount index', type: :feature do
   end
 
   it 'links to the show page of each bulk discount' do
-    page.find_link(@discount1.id)[merchant_bulk_discount_path(@merchant1.id, @discount1.id)]
-    page.find_link(@discount2.id)[merchant_bulk_discount_path(@merchant1.id, @discount2.id)]
-    page.find_link(@discount3.id)[merchant_bulk_discount_path(@merchant1.id, @discount3.id)]
+    page.find_link(@discount1.id.to_s)["merchants/#{@merchant1.id}/bulk_discounts/#{@discount1.id}"]
+    page.find_link(@discount2.id.to_s)["merchants/#{@merchant1.id}/bulk_discounts/#{@discount2.id}"]
+    page.find_link(@discount3.id.to_s)["merchants/#{@merchant1.id}/bulk_discounts/#{@discount3.id}"]
   end
 
   it 'shows a link to delete each bulk discount' do
     page.find_link("Delete Discount ##{@discount1.id}")["/merchants/#{@merchant1.id}/bulk_discounts/#{@discount1.id}"]
+    page.find_link("Delete Discount ##{@discount2.id}")["/merchants/#{@merchant1.id}/bulk_discounts/#{@discount2.id}"]
+    page.find_link("Delete Discount ##{@discount3.id}")["/merchants/#{@merchant1.id}/bulk_discounts/#{@discount3.id}"]
   end
 
   it 'deletes the bulk discount when delete link is clicked' do
     click_link "Delete Discount ##{@discount1.id}"
 
+    expect(page).to have_current_path("/merchants/#{@merchant1.id}/bulk_discounts")
     expect(page).not_to have_selector("#discount-#{@discount1.id}")
 
     within("#discount-#{@discount2.id}") do
