@@ -5,6 +5,7 @@ RSpec.describe 'Merchant\'s Bulk Discount edit', type: :feature do
     @merchant = Merchant.create!(name: 'Sal\'s Signs')
     @discount_1 = @merchant.bulk_discounts.create!(percentage: 10.0, quantity_threshold: 10)
     @discount_2 = @merchant.bulk_discounts.create!(percentage: 5.0, quantity_threshold: 5)
+    @discount_3 = @merchant.bulk_discounts.create!(percentage: 5.0, quantity_threshold: 5)
 
     @customer_1 = Customer.create!(first_name: 'Sally', last_name: 'Shopper')
 
@@ -37,22 +38,33 @@ RSpec.describe 'Merchant\'s Bulk Discount edit', type: :feature do
   it 'shows an error if the discount is applied to any pending invoice' do
     visit edit_merchant_bulk_discount_path(@merchant.id, @discount_2.id)
 
-    fill_in "Percentage", with: 12.5
+    fill_in "Percentage", with: 25
     fill_in "Quantity Threshold", with: 25
     click_button "Update Bulk discount"
 
     expect(page).to have_current_path(edit_merchant_bulk_discount_path(@merchant.id, @discount_2.id))
-    expect(page).to have_content("Error: Cannot update discount while it applies to in-progress invoices")
+    expect(page).to have_content("Error: Cannot update discount. Check that it isn't currently applied to in-progress invoices and that it is not superseded by another discount")
+  end
+
+  it 'shows an error message if the discount terms are invalid based on other discounts' do
+    visit edit_merchant_bulk_discount_path(@merchant.id, @discount_3.id)
+
+    fill_in "Percentage", with: 5
+    fill_in "Quantity Threshold", with: 10
+    click_button "Update Bulk discount"
+
+    expect(page).to have_current_path(edit_merchant_bulk_discount_path(@merchant.id, @discount_3.id))
+    expect(page).to have_content("Error: Cannot update discount. Check that it isn't currently applied to in-progress invoices and that it is not superseded by another discount")
   end
 
   it 'upon valid submit, redirects to show page, shows updated attributes' do
-    fill_in "Percentage", with: 12.5
-    fill_in "Quantity Threshold", with: 25
+    fill_in "Percentage", with: 25
+    fill_in "Quantity Threshold", with: 15
     click_button "Update Bulk discount"
 
     expect(page).to have_current_path( "/merchants/#{@merchant.id}/bulk_discounts/#{@discount_1.id}")
-    expect(page).to have_content("Percentage: 12.5%")
-    expect(page).to have_content("Quantity Threshold: 25")
+    expect(page).to have_content("Percentage: 25.0%")
+    expect(page).to have_content("Quantity Threshold: 15")
     expect(page).to_not have_content("Percentage: 10.0%")
     expect(page).to_not have_content("Quantity Threshold: 10")
   end
