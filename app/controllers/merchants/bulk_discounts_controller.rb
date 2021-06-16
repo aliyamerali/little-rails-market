@@ -19,7 +19,7 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = merchant.bulk_discounts.new(bulk_discount_params)
 
-    if discount.discount_valid?
+    if discount.create_valid?
       if discount.save
         redirect_to merchant_bulk_discounts_path(merchant.id)
       else
@@ -50,7 +50,7 @@ class Merchants::BulkDiscountsController < ApplicationController
       end
     else
       redirect_to edit_merchant_bulk_discount_path(merchant.id, discount.id)
-      flash[:alert] = "Error: Cannot update discount while it applies to in-progress invoices"
+      flash[:alert] = "Error: Cannot update discount. Check that it isn't currently applied to in-progress invoices and that it is not superseded by another discount"
     end
   end
 
@@ -58,7 +58,7 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = BulkDiscount.find(params[:id])
 
-    if discount.update_valid?
+    if discount.delete_valid?
       merchant.bulk_discounts.delete(discount)
       redirect_to merchant_bulk_discounts_path(merchant.id)
     else

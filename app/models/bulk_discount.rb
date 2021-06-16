@@ -3,7 +3,8 @@ class BulkDiscount < ApplicationRecord
   validates :percentage, presence: true
   validates :quantity_threshold, presence: true
 
-  def update_valid?
+
+  def delete_valid?
     in_progress_invoices = merchant
                           .items
                           .joins(:invoices)
@@ -13,12 +14,22 @@ class BulkDiscount < ApplicationRecord
     in_progress_invoices.length == 0
   end
 
-  def discount_valid?
-    superceding_invoices = BulkDiscount
-                          .where('quantity_threshold <= ?', self.quantity_threshold)
-                          .where('percentage >= ?', self.percentage)
+  def create_valid?
+    if id.nil?
+      superceding_invoices = BulkDiscount
+                            .where('quantity_threshold <= ?', self.quantity_threshold)
+                            .where('percentage >= ?', self.percentage)
+    else
+      superceding_invoices = BulkDiscount
+                            .where('quantity_threshold <= ?', self.quantity_threshold)
+                            .where('percentage >= ?', self.percentage)
+                            .where.not('id = ?', self.id)
+    end
 
     superceding_invoices.length == 0
   end
 
+  def update_valid?
+    delete_valid? && create_valid?
+  end
 end
