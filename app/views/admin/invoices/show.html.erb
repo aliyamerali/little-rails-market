@@ -19,7 +19,7 @@
     <li><%= "Item: #{item.name}" %>
       <ul>
         <li><%= "Quantity: #{item.sale_quantity}" %></li>
-        <% price = item.sale_price.to_f %>
+        <% price = item.sale_price %>
         <li><%= "Sale Price: #{number_to_currency(price/100)}" %></li>
       </ul>
     </li>

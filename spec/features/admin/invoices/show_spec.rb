@@ -58,9 +58,9 @@ RSpec.describe 'admin/invoices/show.html.erb' do
       expect(page).to have_content('50')
       expect(page).to have_content('3')
       expect(page).to have_content('1')
-      expect(page).to have_content('$5.50')
+      expect(page).to have_content('$5.00')
       expect(page).to have_content('$115.00')
-      expect(page).to have_content('$0.16')
+      expect(page).to have_content('$0.00')
     end
   end
 
@@ -75,5 +75,5 @@ RSpec.describe 'admin/invoices/show.html.erb' do
       expect(page).to have_content('Discounted Revenue: $578.91')
     end
   end
-  
+
 end
