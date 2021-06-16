@@ -19,11 +19,16 @@ class Merchants::BulkDiscountsController < ApplicationController
     merchant = Merchant.find(params[:merchant_id])
     discount = merchant.bulk_discounts.new(bulk_discount_params)
 
-    if discount.save
-      redirect_to merchant_bulk_discounts_path(merchant.id)
+    if discount.discount_valid?
+      if discount.save
+        redirect_to merchant_bulk_discounts_path(merchant.id)
+      else
+        redirect_to new_merchant_bulk_discount_path(merchant.id)
+        flash[:alert] = "Error: #{error_message(discount.errors)}"
+      end
     else
       redirect_to new_merchant_bulk_discount_path(merchant.id)
-      flash[:alert] = "Error: #{error_message(discount.errors)}"
+      flash[:alert] = "Error: Discount terms invalid - another discount will always supersede"
     end
   end
 
