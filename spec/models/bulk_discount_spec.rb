@@ -32,10 +32,15 @@ RSpec.describe BulkDiscount do
     it '#discount_valid? returns false if discount will always be superceded by existing discount' do
       merchant = Merchant.create!(name: 'Sal\'s Signs')
       discount_1 = merchant.bulk_discounts.create!(percentage: 10.0, quantity_threshold: 10)
-      discount_2 = merchant.bulk_discounts.new(percentage: 5.0, quantity_threshold: 12)
 
-      expect(discount_1.discount_valid?).to eq(true)
+      discount_2 = merchant.bulk_discounts.new(percentage: 10.0, quantity_threshold: 10)
       expect(discount_2.discount_valid?).to eq(false)
+
+      discount_3 = merchant.bulk_discounts.new(percentage: 15.0, quantity_threshold: 12)
+      expect(discount_3.discount_valid?).to eq(true)
+      
+      discount_4 = merchant.bulk_discounts.new(percentage: 15.0, quantity_threshold: 5)
+      expect(discount_4.discount_valid?).to eq(true)
     end
   end
 end

@@ -14,7 +14,11 @@ class BulkDiscount < ApplicationRecord
   end
 
   def discount_valid?
+    superceding_invoices = BulkDiscount
+                          .where('quantity_threshold <= ?', self.quantity_threshold)
+                          .where('percentage >= ?', self.percentage)
 
+    superceding_invoices.length == 0
   end
 
 end
