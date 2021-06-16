@@ -3,15 +3,17 @@
 ## About this Project
 "Little Esty Shop" is a group project that requires students to build a fictitious e-commerce platform where merchants and admins can manage inventory and fulfill customer invoices. This repo builds upon the core functionality defined in these [user stories](./doc/user_stories.md) to add on a bulk-discount feature, as defined in these [user stories](https://backend.turing.edu/module2/projects/bulk_discounts).
 
-#### Bulk Discount Functionality
+### Bulk Discount Functionality
 Timeframe: 6 days   
-Heroku: [Little Rails Market](https://little-rails-market.herokuapp.com/)
+Heroku: [Little Rails Market](https://little-rails-market.herokuapp.com/)  
+Contributor: 
+- Aliya Merali  
+   [Github](https://github.com/aliyamerali) | [LinkedIn](https://www.linkedin.com/in/aliyamerali/)
 
-#### Core Functionality
+### Core Functionality
 Timeframe: 9 days   
-Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)
-
-## Contributors (Core Functionality only)
+Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)    
+Contributors: 
 - Lawrence Whalen  
    [Github](https://github.com/LawrenceWhalen) | [LinkedIn](https://www.linkedin.com/in/lawrence-whalen-15996220a/)
 - Aliya Merali  
@@ -40,6 +42,7 @@ Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)
 - Capybara
 - Factory Bot
 - GitHub API
+- Nager.date API
 
 ## Important Gems(Libraries):
 * [rspec-rails](https://github.com/rspec/rspec-rails)
@@ -66,4 +69,5 @@ Heroku: [Little Rails Shop](https://little-rails-shop.herokuapp.com/)
 
 ## Additonal References
 - [Base Repository](https://github.com/turingschool-examples/little-esty-shop) used for Turing's Backend Module 2.
-- [Github Documentation](https://docs.github.com/en/rest) used for Github documentation.
+- [Github API Documentation](https://docs.github.com/en/rest)
+- [Nager.date API Documentation](https://date.nager.at/)
