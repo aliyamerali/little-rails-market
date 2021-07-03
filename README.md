@@ -1,7 +1,7 @@
-# Little Esty Shop
+# Little Rails Market
 
 ## About this Project
-"Little Esty Shop" is a group project that requires students to build a fictitious e-commerce platform where merchants and admins can manage inventory and fulfill customer invoices. This repo builds upon the core functionality defined in these [user stories](./doc/user_stories.md) to add on a bulk-discount feature, as defined in these [user stories](https://backend.turing.edu/module2/projects/bulk_discounts).
+"Little Rails Market" is a project that builds **bulk discount functionality** on top of a previously existing set of core features completed in a group project. The core functionality built a fictitious e-commerce platform where merchants and admins manage inventory and fulfill customer invoices (as defined in these [user stories](./doc/user_stories.md)). This repo builds upon that functionality to add on a bulk-discount feature, as defined in these [user stories](https://backend.turing.edu/module2/projects/bulk_discounts).
 
 ### Bulk Discount Functionality
 Timeframe: 6 days   
