@@ -1,6 +1,6 @@
 # Little Rails Market
 <a href="https://img.shields.io/badge/coverage-99.19%25-green">
-        <img src="https://img.shields.io/badge/coverage-99.19%%25-green"
+        <img src="https://img.shields.io/badge/coverage-99.19%25-green"
             alt="coverage"></a>
             
 
